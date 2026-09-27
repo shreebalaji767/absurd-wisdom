@@ -1,26 +1,6 @@
 from pathlib import Path
 import json
-import random
 import html
-import hashlib
-
-
-# ============================================================
-# THE HUMAN WISDOM ARCHIVE
-# Static-site generator
-#
-# Run:
-#     python generate.py
-#
-# Output:
-#     index.html
-#
-# No database
-# No login
-# No signup
-# No localStorage
-# No external dependencies
-# ============================================================
 
 
 OUTPUT = Path("index.html")
@@ -30,14 +10,13 @@ OUTPUT = Path("index.html")
 # ARCHIVAL PERSONNEL
 # ============================================================
 
-FICTIONAL_PERSONS = [
+PERSONS = [
     {
         "name": "Aren Voss",
         "role": "Provincial Cartographer",
         "origin": "Northern Territories",
         "period": "Late 18th Century",
         "category": "Practical Philosophy",
-        "style": "measured",
     },
     {
         "name": "Mira Sen",
@@ -45,7 +24,6 @@ FICTIONAL_PERSONS = [
         "origin": "Eastern Provinces",
         "period": "Early 20th Century",
         "category": "Observation",
-        "style": "quiet",
     },
     {
         "name": "Captain Ilyan Vale",
@@ -53,7 +31,6 @@ FICTIONAL_PERSONS = [
         "origin": "Western Maritime District",
         "period": "19th Century",
         "category": "Endurance",
-        "style": "military",
     },
     {
         "name": "Professor Niko Almostov",
@@ -61,7 +38,6 @@ FICTIONAL_PERSONS = [
         "origin": "Central Academy",
         "period": "Early 20th Century",
         "category": "Reason",
-        "style": "academic",
     },
     {
         "name": "Elias Thorne",
@@ -69,7 +45,6 @@ FICTIONAL_PERSONS = [
         "origin": "Northwestern Counties",
         "period": "19th Century",
         "category": "Judgment",
-        "style": "legal",
     },
     {
         "name": "Sera Valen",
@@ -77,7 +52,6 @@ FICTIONAL_PERSONS = [
         "origin": "Southern Coast",
         "period": "Late 19th Century",
         "category": "Memory",
-        "style": "archival",
     },
     {
         "name": "Old Master Ren",
@@ -85,7 +59,6 @@ FICTIONAL_PERSONS = [
         "origin": "Eastern Highlands",
         "period": "Undated",
         "category": "Work",
-        "style": "proverbial",
     },
     {
         "name": "Dorian Pell",
@@ -93,7 +66,6 @@ FICTIONAL_PERSONS = [
         "origin": "Central Administrative District",
         "period": "19th Century",
         "category": "Human Nature",
-        "style": "bureaucratic",
     },
     {
         "name": "Ansel Grey",
@@ -101,7 +73,6 @@ FICTIONAL_PERSONS = [
         "origin": "Industrial North",
         "period": "Early 20th Century",
         "category": "Persistence",
-        "style": "industrial",
     },
     {
         "name": "Liora Venn",
@@ -109,7 +80,6 @@ FICTIONAL_PERSONS = [
         "origin": "Old University Quarter",
         "period": "Late 19th Century",
         "category": "Language",
-        "style": "rhetorical",
     },
     {
         "name": "Bastian Or",
@@ -117,7 +87,6 @@ FICTIONAL_PERSONS = [
         "origin": "Old Capital",
         "period": "19th Century",
         "category": "Time",
-        "style": "observational",
     },
     {
         "name": "Nera Sol",
@@ -125,7 +94,6 @@ FICTIONAL_PERSONS = [
         "origin": "Southern Market District",
         "period": "Early 19th Century",
         "category": "Experience",
-        "style": "practical",
     },
     {
         "name": "Havel Marr",
@@ -133,7 +101,6 @@ FICTIONAL_PERSONS = [
         "origin": "River Provinces",
         "period": "19th Century",
         "category": "Risk",
-        "style": "technical",
     },
     {
         "name": "Orin Bell",
@@ -141,7 +108,6 @@ FICTIONAL_PERSONS = [
         "origin": "Western Plains",
         "period": "Early 20th Century",
         "category": "Growth",
-        "style": "plain",
     },
     {
         "name": "Tavian Roe",
@@ -149,88 +115,12 @@ FICTIONAL_PERSONS = [
         "origin": "Northern Port",
         "period": "18th Century",
         "category": "Direction",
-        "style": "nautical",
-    },
-    {
-        "name": "Marek Doss",
-        "role": "Inspector of Public Roads",
-        "origin": "Highland District",
-        "period": "19th Century",
-        "category": "Progress",
-        "style": "administrative",
-    },
-]
-
-
-REAL_PERSONS = [
-    {
-        "name": "Albert Einstein",
-        "role": "Physicist",
-        "origin": "Germany / Switzerland / United States",
-        "period": "1879–1955",
-        "category": "Scientific Thought",
-    },
-    {
-        "name": "Marie Curie",
-        "role": "Physicist and Chemist",
-        "origin": "Poland / France",
-        "period": "1867–1934",
-        "category": "Scientific Thought",
-    },
-    {
-        "name": "Leonardo da Vinci",
-        "role": "Artist, Engineer and Polymath",
-        "origin": "Italian States",
-        "period": "1452–1519",
-        "category": "Observation",
-    },
-    {
-        "name": "Ada Lovelace",
-        "role": "Mathematician and Writer",
-        "origin": "United Kingdom",
-        "period": "1815–1852",
-        "category": "Computation",
-    },
-    {
-        "name": "Rabindranath Tagore",
-        "role": "Poet and Philosopher",
-        "origin": "Bengal",
-        "period": "1861–1941",
-        "category": "Literature",
-    },
-    {
-        "name": "Nikola Tesla",
-        "role": "Inventor and Engineer",
-        "origin": "Austrian Empire / United States",
-        "period": "1856–1943",
-        "category": "Invention",
-    },
-    {
-        "name": "Socrates",
-        "role": "Philosopher",
-        "origin": "Ancient Athens",
-        "period": "c. 470–399 BCE",
-        "category": "Philosophy",
-    },
-    {
-        "name": "Confucius",
-        "role": "Teacher and Philosopher",
-        "origin": "Ancient China",
-        "period": "551–479 BCE",
-        "category": "Ethics",
-    },
-    {
-        "name": "Marcus Aurelius",
-        "role": "Roman Emperor and Stoic Writer",
-        "origin": "Roman Empire",
-        "period": "121–180 CE",
-        "category": "Stoicism",
     },
 ]
 
 
 # ============================================================
-# WORD BANKS
+# WORD BANK
 # ============================================================
 
 OBJECTS = [
@@ -286,7 +176,6 @@ ABSTRACT = [
     "pride",
     "curiosity",
     "judgment",
-    "timing",
     "wisdom",
     "responsibility",
     "change",
@@ -315,63 +204,9 @@ ACTIONS = [
     "climbing",
 ]
 
-PLACES = [
-    "the old station",
-    "the northern road",
-    "the market square",
-    "the observatory",
-    "the river crossing",
-    "the empty classroom",
-    "the western gate",
-    "the workshop",
-    "the hill road",
-    "the village archive",
-    "the harbor",
-    "the railway yard",
-    "the courthouse",
-    "the orchard",
-    "the mountain pass",
-]
-
-NOUNS = [
-    "a question",
-    "a mistake",
-    "an idea",
-    "a promise",
-    "a problem",
-    "a decision",
-    "a habit",
-    "a plan",
-    "a memory",
-    "an answer",
-    "a silence",
-    "a warning",
-    "a map",
-    "a lesson",
-    "a beginning",
-]
-
-ADJECTIVES = [
-    "patient",
-    "stubborn",
-    "quiet",
-    "ordinary",
-    "broken",
-    "unfinished",
-    "small",
-    "heavy",
-    "unexpected",
-    "lonely",
-    "old",
-    "careful",
-    "impatient",
-    "awkward",
-    "simple",
-]
-
 
 # ============================================================
-# QUOTE CONSTRUCTION
+# QUOTE LIBRARY
 # ============================================================
 
 QUOTE_TEMPLATES = [
@@ -381,11 +216,11 @@ QUOTE_TEMPLATES = [
     ),
     (
         "The {object} never promised to move. That is why every map eventually learns humility.",
-        "Reality does not owe itself to our preferred route. A plan becomes useful only when it remains responsive to what actually exists."
+        "Reality does not owe itself to our preferred route."
     ),
     (
         "A locked door is a very confident piece of furniture.",
-        "Obstacles often appear more authoritative than they really are. Their presence does not automatically establish their permanence."
+        "Obstacles often appear more authoritative than they really are."
     ),
     (
         "The smallest key opened the largest door because the door had no opinion about size.",
@@ -393,35 +228,27 @@ QUOTE_TEMPLATES = [
     ),
     (
         "I planted a question and harvested an inconvenience. It was the most useful crop I ever grew.",
-        "Good questions rarely provide immediate comfort. Their value often lies in exposing assumptions that had previously gone unnoticed."
+        "Good questions rarely provide immediate comfort. Their value often lies in exposing assumptions."
     ),
     (
         "A clock that is wrong twice a day is still employed by time.",
-        "Usefulness cannot always be reduced to perfect accuracy. Even imperfect instruments can reveal something about the system around them."
+        "Usefulness cannot always be reduced to perfect accuracy."
     ),
     (
         "The bridge looked stronger after everyone stopped asking whether it was strong.",
-        "Confidence can make uncertainty invisible. Removing questions does not remove the conditions that made the questions necessary."
+        "Removing questions does not remove the conditions that made the questions necessary."
     ),
     (
         "I carried the {object} for ten miles before discovering that it was the wrong thing to carry.",
-        "Effort and direction are separate virtues. Persistence cannot compensate indefinitely for a mistaken premise."
+        "Effort and direction are separate virtues."
     ),
     (
         "A map becomes dangerous when the traveler starts apologizing to the road.",
-        "Representations are useful precisely because they are representations. Reality should not be forced to obey the diagram."
-    ),
-    (
-        "The quietest person in the room may simply have forgotten where the argument was going.",
-        "Silence has many meanings. It should not automatically be interpreted as agreement, wisdom, confidence, or opposition."
-    ),
-    (
-        "I repaired the {object} until it became more complicated than the original problem.",
-        "Improvement can create unnecessary complexity when the desire to fix something becomes detached from the purpose of the repair."
+        "Reality should not be forced to obey the diagram."
     ),
     (
         "The ladder did not become shorter because I complained about the height.",
-        "Frustration can describe difficulty, but description alone does not reduce the distance between intention and achievement."
+        "Frustration can describe difficulty, but description alone does not reduce it."
     ),
     (
         "A heavy stone teaches patience because it refuses to be impressed.",
@@ -429,7 +256,7 @@ QUOTE_TEMPLATES = [
     ),
     (
         "The road was not difficult. My expectations were carrying too much luggage.",
-        "Difficulty is partly shaped by what we believe a journey should look like. Expectations can add weight to an already demanding task."
+        "Expectations can add weight to an already demanding task."
     ),
     (
         "A person who counts every step eventually discovers that walking was never a spreadsheet.",
@@ -441,7 +268,7 @@ QUOTE_TEMPLATES = [
     ),
     (
         "I asked the mirror for advice. It returned the same face and charged no fee.",
-        "Reflection is valuable, but self-examination can become circular unless it eventually produces a different action."
+        "Reflection is valuable, but self-examination must eventually produce action."
     ),
     (
         "A broken compass can still teach you that you are lost.",
@@ -449,27 +276,15 @@ QUOTE_TEMPLATES = [
     ),
     (
         "The bell rang because someone pulled it. History later called this inevitability.",
-        "Events often appear inevitable only after their causes have already become part of the past."
+        "Events often appear inevitable only after their causes have become part of the past."
     ),
     (
         "The door was ordinary until I needed it to be extraordinary.",
-        "Circumstances can change the meaning of ordinary objects, abilities, and relationships without changing their underlying nature."
-    ),
-    (
-        "I searched for wisdom in the library and found a chair with better posture.",
-        "Knowledge is not automatically transformed into wisdom. The way one inhabits knowledge matters as much as possessing it."
+        "Circumstances can change the meaning of ordinary things without changing their nature."
     ),
     (
         "A perfect plan has never survived its first meeting with weather.",
         "Planning is valuable because it prepares action, not because it predicts every condition."
-    ),
-    (
-        "The bucket leaked slowly enough to make every journey educational.",
-        "Small recurring losses can teach more than dramatic failures because they expose patterns that are easy to ignore."
-    ),
-    (
-        "The mountain did not become smaller. I simply stopped negotiating with it.",
-        "Acceptance can change the relationship between a person and a difficulty without changing the difficulty itself."
     ),
     (
         "I lost the key and discovered that the door had never been locked.",
@@ -489,7 +304,7 @@ QUOTE_TEMPLATES = [
     ),
     (
         "I sharpened the pencil until there was nothing left with which to write.",
-        "Optimization can become destructive when improvement is measured without reference to the purpose of the activity."
+        "Optimization can become destructive when improvement is measured without reference to purpose."
     ),
     (
         "The shortest road looked suspicious because nobody had taken it seriously.",
@@ -499,29 +314,25 @@ QUOTE_TEMPLATES = [
 
 
 # ============================================================
-# SECONDARY INTERPRETATIONS
+# ADDITIONAL ANALYSIS
 # ============================================================
 
-INTERPRETATION_TEMPLATES = [
-    "The statement treats an ordinary object as if it possessed judgment, revealing a distinction between physical reality and the meanings people attach to it.",
-    "At first reading the statement is deliberately literal and unreasonable. Its deeper structure concerns the gap between intention and consequence.",
-    "The apparent contradiction is useful because it places two normally separate ideas in the same frame. The resulting tension makes an ordinary assumption visible.",
-    "The statement can be read as an argument against confusing activity with progress. Movement is measurable; direction is harder to establish.",
-    "The image suggests that uncertainty does not disappear simply because a person becomes more confident about an explanation.",
-    "The underlying observation is that human beings often assign intention to circumstances that are indifferent to them.",
-    "The statement uses an absurd physical image to describe a familiar psychological pattern: the gradual transformation of a temporary condition into a permanent habit.",
-    "The deeper argument concerns proportion. A small action may have consequences much larger than its physical scale, while enormous effort may accomplish very little.",
+INTERPRETATIONS = [
+    "The statement uses an ordinary object to examine a larger question concerning intention, expectation and consequence.",
+    "Its apparent absurdity conceals a distinction between activity and progress.",
+    "The image suggests that uncertainty does not disappear merely because a person becomes confident about an explanation.",
+    "The statement examines the difference between effort and direction.",
+    "The underlying observation is that people often assign intention to circumstances that are indifferent to them.",
+    "The physical image can be read as a metaphor for the gradual transformation of a temporary condition into a permanent habit.",
     "The statement questions whether efficiency should always be treated as the highest form of improvement.",
-    "The image suggests that a person's interpretation of an event can become part of the event's consequences.",
-    "The apparent nonsense disappears when the objects are understood as metaphors for assumptions, habits, and expectations.",
-    "The statement distinguishes between knowing what something is and knowing what should be done with that knowledge.",
+    "The image suggests that interpretation itself can become part of an event's consequences.",
 ]
 
 
-QUESTION_TEMPLATES = [
+QUESTIONS = [
     "What changes when an obstacle is treated as information rather than opposition?",
     "At what point does preparation stop being preparation and become avoidance?",
-    "Can an imperfect method still produce a useful understanding?",
+    "Can an imperfect method still produce useful understanding?",
     "How much of difficulty belongs to the problem, and how much belongs to expectation?",
     "When does persistence become attachment to a mistaken direction?",
     "Can certainty be useful while still being incomplete?",
@@ -529,48 +340,24 @@ QUESTION_TEMPLATES = [
     "Does a solution remain a solution when it creates a larger problem?",
     "How often do people mistake familiarity for truth?",
     "What can absence reveal that presence conceals?",
-    "Can a failed attempt contain better information than a successful one?",
-    "When does simplification become oversimplification?",
 ]
 
 
-APPLICATION_TEMPLATES = [
-    "In practical terms, the observation favors small experiments over elaborate assumptions.",
+APPLICATIONS = [
+    "The observation favors small experiments over elaborate assumptions.",
     "The principle can be applied by separating effort from outcome and examining whether the chosen direction still serves the original purpose.",
     "A useful application is to identify which part of a problem is factual and which part has been added through expectation.",
-    "The statement suggests checking the instrument, the map, or the assumption before increasing the amount of effort.",
-    "Applied to ordinary decisions, the idea recommends leaving room for circumstances that could not have been predicted in advance.",
+    "The statement suggests checking the instrument, map or assumption before increasing effort.",
     "The practical lesson is not to abandon planning, but to keep plans subordinate to evidence.",
     "In work and study, this principle supports periodic review rather than endless continuation of an inherited method.",
 ]
 
 
-CONTRADICTION_TEMPLATES = [
-    "Its central contradiction is that the object appears to behave like a person while the person behaves like an object.",
-    "The statement is deliberately unreasonable on its surface, yet the unreasonable image exposes a reasonable human habit.",
-    "The paradox comes from treating permanence and change as if they were opposites, when in practice they often describe different stages of the same process.",
-    "The tension lies between effort and usefulness: more effort is not automatically more valuable.",
-    "The statement places certainty beside uncertainty without resolving the difference.",
-    "The apparent contradiction comes from confusing the measurement of an event with its meaning.",
-]
-
-
-OBSERVATION_TEMPLATES = [
-    "Observed principle: direction generally matters before acceleration.",
-    "Observed principle: assumptions can become invisible precisely when they are shared by everyone.",
-    "Observed principle: repeated small consequences can outweigh one dramatic event.",
-    "Observed principle: an instrument is useful only in relation to the question it is being used to answer.",
-    "Observed principle: confidence changes perception without necessarily changing circumstances.",
-    "Observed principle: attention can convert an ordinary event into useful evidence.",
-    "Observed principle: a system can remain functional while still containing an unresolved contradiction.",
-]
-
-
 # ============================================================
-# HINDI TRANSLATION
+# HINDI
 # ============================================================
 
-HINDI_QUOTE_MAP = {
+HINDI = {
     "A locked door is a very confident piece of furniture.":
         "एक बंद दरवाज़ा बहुत आत्मविश्वासी फर्नीचर होता है।",
 
@@ -609,86 +396,27 @@ HINDI_QUOTE_MAP = {
 }
 
 
-HINDI_INTERPRETATIONS = [
-    "यह कथन साधारण वस्तु को मानवीय निर्णय देने के माध्यम से वास्तविकता और उसके अर्थ के बीच का अंतर दिखाता है।",
-    "ऊपरी स्तर पर यह कथन असंगत दिखाई देता है, लेकिन इसके भीतर उद्देश्य और परिणाम के बीच का अंतर छिपा है।",
-    "यह विचार बताता है कि किसी समस्या के सामने अधिक प्रयास करना हमेशा सही दिशा में आगे बढ़ना नहीं होता।",
-    "कभी-कभी हमारी धारणाएँ स्वयं उस परिस्थिति से बड़ी बाधा बन जाती हैं जिसे वे समझाने के लिए बनाई गई थीं।",
-    "यह कथन योजना और वास्तविकता के बीच आवश्यक दूरी की ओर संकेत करता है।",
-    "अपूर्ण साधन भी उपयोगी जानकारी दे सकते हैं, यदि उनकी सीमाओं को समझा जाए।",
-    "यह विचार बताता है कि किसी घटना की व्याख्या भी उस घटना के परिणामों का हिस्सा बन सकती है।",
-]
-
-
 # ============================================================
-# HTML HELPERS
+# SERIALIZATION
 # ============================================================
 
-def esc(value):
-    return html.escape(str(value), quote=True)
+def js(data):
+    return json.dumps(data, ensure_ascii=False)
 
 
-def js(value):
-    return json.dumps(value, ensure_ascii=False)
-
-
-def archive_id(seed):
-    digest = hashlib.sha256(seed.encode("utf-8")).hexdigest()
-    return "WA-" + str(int(digest[:10], 16) % 900000 + 100000)
-
-
-def build_initial_entry():
-    rng = random.Random()
-
-    person = rng.choice(FICTIONAL_PERSONS)
-
-    quote_template, interpretation = rng.choice(QUOTE_TEMPLATES)
-
-    quote = quote_template.format(
-        object=rng.choice(OBJECTS),
-        abstract=rng.choice(ABSTRACT),
-        action=rng.choice(ACTIONS),
-    )
-
-    return {
-        "name": person["name"],
-        "role": person["role"],
-        "origin": person["origin"],
-        "period": person["period"],
-        "category": person["category"],
-        "quote": quote,
-        "interpretation": interpretation,
-        "record_type": "Archival Statement",
-        "status": "Catalogued",
-    }
-
-
-# ============================================================
-# BROWSER DATA
-# ============================================================
-
-BROWSER_DATA = {
-    "persons": FICTIONAL_PERSONS,
+DATA = {
+    "persons": PERSONS,
     "quotes": [
         {
-            "q": q,
-            "i": i,
+            "quote": quote,
+            "interpretation": interpretation,
         }
-        for q, i in QUOTE_TEMPLATES
+        for quote, interpretation in QUOTE_TEMPLATES
     ],
-    "interpretations": INTERPRETATION_TEMPLATES,
-    "questions": QUESTION_TEMPLATES,
-    "applications": APPLICATION_TEMPLATES,
-    "contradictions": CONTRADICTION_TEMPLATES,
-    "observations": OBSERVATION_TEMPLATES,
-    "objects": OBJECTS,
-    "abstract": ABSTRACT,
-    "actions": ACTIONS,
-    "places": PLACES,
-    "nouns": NOUNS,
-    "adjectives": ADJECTIVES,
-    "hindiQuotes": HINDI_QUOTE_MAP,
-    "hindiInterpretations": HINDI_INTERPRETATIONS,
+    "interpretations": INTERPRETATIONS,
+    "questions": QUESTIONS,
+    "applications": APPLICATIONS,
+    "hindi": HINDI,
 }
 
 
@@ -696,39 +424,40 @@ BROWSER_DATA = {
 # HTML
 # ============================================================
 
-def generate_html():
-    initial = build_initial_entry()
-    initial_json = json.dumps(initial, ensure_ascii=False)
-    browser_json = json.dumps(BROWSER_DATA, ensure_ascii=False)
+def build_html():
 
-    page = f"""<!DOCTYPE html>
+    data_json = js(DATA)
+
+    return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
 
 <title>The Human Wisdom Archive</title>
 
 <meta
     name="description"
-    content="A digital repository of philosophical observations, historical thought, practical reasoning and archival records."
+    content="The Human Wisdom Archive — catalogued observations concerning conduct, judgment, memory, work and human experience."
 >
-
-<meta name="theme-color" content="#171717">
 
 <style>
 
 :root {{
-    --ink: #171717;
-    --muted: #686868;
-    --paper: #f5f1e8;
-    --paper-dark: #e8e1d4;
-    --line: rgba(23,23,23,.16);
-    --strong-line: rgba(23,23,23,.35);
-    --accent: #8b2e24;
-    --white: #fffdf8;
+    --paper: #f4f0e7;
+    --paper2: #ebe4d6;
+    --ink: #191919;
+    --muted: #706b63;
+    --line: rgba(25,25,25,.17);
+    --strong: rgba(25,25,25,.38);
+    --accent: #823328;
     --serif: Georgia, "Times New Roman", serif;
-    --sans: Inter, Arial, Helvetica, sans-serif;
+    --sans: Arial, Helvetica, sans-serif;
     --mono: "Courier New", monospace;
 }}
 
@@ -742,281 +471,276 @@ html {{
 
 body {{
     margin: 0;
-    min-height: 100vh;
-    color: var(--ink);
     background:
-        radial-gradient(circle at 10% 10%, rgba(139,46,36,.045), transparent 25%),
-        radial-gradient(circle at 90% 80%, rgba(0,0,0,.035), transparent 28%),
+        radial-gradient(
+            circle at 15% 10%,
+            rgba(130,51,40,.05),
+            transparent 28%
+        ),
         var(--paper);
+    color: var(--ink);
     font-family: var(--sans);
 }}
 
-body.layout-editorial {{
-    --accent: #293b54;
-}}
-
-body.layout-ledger {{
-    --accent: #5a4932;
-}}
-
-body.layout-museum {{
-    --accent: #65452e;
-}}
-
-body.layout-night {{
+body.dark {{
     --paper: #111;
-    --paper-dark: #191919;
+    --paper2: #191919;
     --ink: #eee9df;
-    --muted: #aaa39a;
-    --line: rgba(255,255,255,.15);
-    --strong-line: rgba(255,255,255,.34);
-    --white: #171717;
+    --muted: #a49f96;
+    --line: rgba(255,255,255,.16);
+    --strong: rgba(255,255,255,.36);
+    --accent: #c27b6c;
 }}
 
-button {{
-    font: inherit;
+body.blue {{
+    --accent: #304d70;
 }}
 
-.archive-shell {{
-    width: min(1480px, 100%);
-    margin: 0 auto;
-    padding: 24px;
+body.green {{
+    --accent: #49654d;
 }}
 
-.topbar {{
-    display: grid;
-    grid-template-columns: 1fr auto;
-    gap: 20px;
-    align-items: end;
-    border-bottom: 1px solid var(--strong-line);
-    padding-bottom: 20px;
+body.brown {{
+    --accent: #735335;
 }}
 
-.brand {{
+.archive {{
+    width: min(1500px, 100%);
+    margin: auto;
+    padding: 22px;
+}}
+
+.header {{
     display: flex;
-    flex-direction: column;
-    gap: 5px;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 30px;
+    border-bottom: 1px solid var(--strong);
+    padding-bottom: 22px;
 }}
 
-.brand-kicker {{
+.kicker {{
+    color: var(--muted);
     font-family: var(--mono);
     font-size: 10px;
-    letter-spacing: .18em;
+    letter-spacing: .16em;
     text-transform: uppercase;
-    color: var(--muted);
+    margin-bottom: 7px;
 }}
 
-.brand-title {{
+.title {{
     font-family: var(--serif);
-    font-size: clamp(26px, 4vw, 46px);
+    font-size: clamp(29px, 4vw, 52px);
     line-height: .95;
-    letter-spacing: -.035em;
+    letter-spacing: -.04em;
 }}
 
-.brand-subtitle {{
-    max-width: 680px;
-    font-family: var(--serif);
-    font-size: 15px;
+.subtitle {{
+    max-width: 700px;
     color: var(--muted);
-    line-height: 1.5;
+    font-family: var(--serif);
+    line-height: 1.45;
+    font-size: 15px;
+    margin-top: 8px;
 }}
 
-.top-actions {{
+.controls {{
     display: flex;
-    gap: 8px;
+    gap: 7px;
     flex-wrap: wrap;
     justify-content: flex-end;
 }}
 
-.button {{
-    border: 1px solid var(--strong-line);
+.btn {{
+    border: 1px solid var(--strong);
     background: transparent;
     color: var(--ink);
-    padding: 9px 13px;
+    padding: 10px 13px;
     cursor: pointer;
     font-family: var(--mono);
-    font-size: 10px;
+    font-size: 9px;
     letter-spacing: .08em;
     text-transform: uppercase;
     transition: .18s ease;
 }}
 
-.button:hover {{
+.btn:hover {{
     background: var(--ink);
     color: var(--paper);
 }}
 
-.archive-strip {{
+.catalog {{
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     border-bottom: 1px solid var(--line);
 }}
 
-.archive-cell {{
-    min-height: 70px;
+.catalog-item {{
     padding: 13px 15px;
+    min-height: 70px;
     border-right: 1px solid var(--line);
 }}
 
-.archive-cell:last-child {{
+.catalog-item:last-child {{
     border-right: 0;
 }}
 
-.archive-label {{
+.label {{
     display: block;
-    margin-bottom: 6px;
+    color: var(--muted);
     font-family: var(--mono);
     font-size: 9px;
     letter-spacing: .13em;
     text-transform: uppercase;
-    color: var(--muted);
+    margin-bottom: 7px;
 }}
 
-.archive-value {{
+.value {{
     font-family: var(--mono);
     font-size: 11px;
 }}
 
-.main-grid {{
+.content {{
     display: grid;
-    grid-template-columns: minmax(0, 1.7fr) minmax(280px, .7fr);
-    gap: 0;
-    border-bottom: 1px solid var(--strong-line);
+    grid-template-columns: minmax(0, 1.75fr) minmax(280px, .65fr);
 }}
 
-.primary {{
-    min-width: 0;
-    padding: clamp(35px, 6vw, 90px) clamp(20px, 6vw, 90px) 70px 0;
+.main {{
+    padding: clamp(45px, 7vw, 100px) clamp(20px, 7vw, 100px) 80px 0;
     border-right: 1px solid var(--line);
 }}
 
-.secondary {{
-    min-width: 0;
-    padding: 40px 0 50px 35px;
+.side {{
+    padding: 45px 0 50px 35px;
 }}
 
-.record-type {{
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 30px;
+.record-label {{
+    color: var(--accent);
     font-family: var(--mono);
     font-size: 10px;
-    text-transform: uppercase;
     letter-spacing: .15em;
-    color: var(--accent);
-}}
-
-.record-type::before {{
-    content: "";
-    width: 25px;
-    height: 1px;
-    background: currentColor;
+    text-transform: uppercase;
+    margin-bottom: 28px;
 }}
 
 .quote {{
-    max-width: 1050px;
     margin: 0;
+    max-width: 1100px;
     font-family: var(--serif);
-    font-size: clamp(35px, 6vw, 82px);
+    font-size: clamp(37px, 5.8vw, 82px);
     line-height: 1.02;
-    letter-spacing: -.045em;
     font-weight: 400;
-}}
-
-.layout-editorial .quote {{
-    font-size: clamp(38px, 5vw, 72px);
-    max-width: 850px;
-}}
-
-.layout-minimal .quote {{
-    font-size: clamp(34px, 5vw, 65px);
-}}
-
-.layout-ledger .quote {{
-    font-size: clamp(32px, 4.7vw, 68px);
+    letter-spacing: -.045em;
 }}
 
 .attribution {{
+    border-top: 1px solid var(--line);
     margin-top: 45px;
     padding-top: 18px;
-    border-top: 1px solid var(--line);
 }}
 
-.person-name {{
+.name {{
     font-family: var(--serif);
-    font-size: 24px;
+    font-size: 25px;
 }}
 
-.person-role {{
-    margin-top: 4px;
-    font-family: var(--mono);
-    font-size: 10px;
+.role {{
+    margin-top: 5px;
     color: var(--muted);
+    font-family: var(--mono);
+    font-size: 9px;
     text-transform: uppercase;
     letter-spacing: .1em;
 }}
 
-.interpretation {{
-    margin-top: 60px;
-    border-top: 2px solid var(--ink);
-    padding-top: 18px;
+.quote-actions {{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    margin-top: 27px;
+    padding-bottom: 35px;
+    border-bottom: 1px solid var(--line);
 }}
 
-.section-label {{
-    margin-bottom: 13px;
-    font-family: var(--mono);
-    font-size: 9px;
-    letter-spacing: .15em;
-    text-transform: uppercase;
-    color: var(--muted);
+.quote-actions .btn {{
+    border-color: var(--accent);
+}}
+
+.interpretation {{
+    margin-top: 50px;
+    padding-top: 17px;
+    border-top: 2px solid var(--ink);
 }}
 
 .interpretation-text {{
     max-width: 850px;
     font-family: var(--serif);
-    font-size: clamp(18px, 2vw, 26px);
-    line-height: 1.42;
+    font-size: clamp(18px, 2vw, 25px);
+    line-height: 1.45;
 }}
 
-.analysis-grid {{
+.analysis {{
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    margin-top: 35px;
-    border-top: 1px solid var(--line);
+    grid-template-columns: repeat(2, 1fr);
     border-left: 1px solid var(--line);
+    border-top: 1px solid var(--line);
+    margin-top: 35px;
 }}
 
-.analysis-card {{
-    min-height: 190px;
-    padding: 22px;
+.card {{
+    min-height: 170px;
+    padding: 21px;
     border-right: 1px solid var(--line);
     border-bottom: 1px solid var(--line);
 }}
 
-.analysis-card p {{
+.card p {{
     margin: 0;
     font-family: var(--serif);
-    font-size: 17px;
+    font-size: 16px;
     line-height: 1.55;
 }}
 
-.sidebar-block {{
-    padding-bottom: 28px;
-    margin-bottom: 28px;
-    border-bottom: 1px solid var(--line);
+.question {{
+    margin-top: 45px;
+    border: 1px solid var(--strong);
+    padding: 25px;
 }}
 
-.sidebar-title {{
+.question-text {{
+    font-family: var(--serif);
+    font-size: 23px;
+    line-height: 1.4;
+}}
+
+.seal {{
+    width: 95px;
+    height: 95px;
+    border: 1px solid var(--strong);
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    text-align: center;
     font-family: var(--mono);
-    font-size: 9px;
-    text-transform: uppercase;
-    letter-spacing: .15em;
-    color: var(--muted);
-    margin-bottom: 13px;
+    font-size: 8px;
+    line-height: 1.4;
+    letter-spacing: .08em;
+    margin-bottom: 25px;
 }}
 
-.metadata {{
+.side-section {{
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 27px;
+    margin-bottom: 27px;
+}}
+
+.side-text {{
+    font-family: var(--serif);
+    font-size: 16px;
+    line-height: 1.55;
+}}
+
+.meta {{
     display: grid;
     gap: 15px;
 }}
@@ -1027,11 +751,11 @@ button {{
 }}
 
 .meta-key {{
+    color: var(--muted);
     font-family: var(--mono);
     font-size: 9px;
     text-transform: uppercase;
-    letter-spacing: .12em;
-    color: var(--muted);
+    letter-spacing: .1em;
 }}
 
 .meta-value {{
@@ -1040,242 +764,179 @@ button {{
     line-height: 1.3;
 }}
 
-.catalog-note {{
-    font-family: var(--serif);
-    font-size: 16px;
-    line-height: 1.55;
-}}
-
-.index-mark {{
-    width: 90px;
-    height: 90px;
-    border: 1px solid var(--strong-line);
-    border-radius: 50%;
-    display: grid;
-    place-items: center;
-    font-family: var(--mono);
-    font-size: 9px;
-    letter-spacing: .08em;
-    text-align: center;
-    line-height: 1.3;
-    margin-bottom: 20px;
-}}
-
-.question-block {{
-    margin-top: 55px;
-    padding: 25px;
-    border: 1px solid var(--strong-line);
-    background: rgba(255,255,255,.15);
-}}
-
-.question-text {{
-    font-family: var(--serif);
-    font-size: 23px;
-    line-height: 1.35;
-}}
-
-.bottom-bar {{
+.footer {{
     display: flex;
     justify-content: space-between;
     gap: 20px;
-    padding-top: 20px;
+    border-top: 1px solid var(--strong);
+    padding-top: 17px;
+    color: var(--muted);
     font-family: var(--mono);
     font-size: 9px;
-    color: var(--muted);
     text-transform: uppercase;
     letter-spacing: .1em;
 }}
 
-.copy-status {{
+.toast {{
     position: fixed;
     left: 50%;
-    bottom: 22px;
-    transform: translateX(-50%) translateY(20px);
-    padding: 11px 16px;
+    bottom: 24px;
+    transform: translate(-50%, 20px);
     background: var(--ink);
     color: var(--paper);
+    padding: 12px 17px;
     font-family: var(--mono);
     font-size: 10px;
     opacity: 0;
     pointer-events: none;
-    transition: .2s ease;
-    z-index: 50;
+    transition: .2s;
+    z-index: 100;
 }}
 
-.copy-status.show {{
+.toast.show {{
     opacity: 1;
-    transform: translateX(-50%) translateY(0);
+    transform: translate(-50%, 0);
 }}
 
-.lang-hi .en {{
-    display: none !important;
+.hi {{
+    display: none;
 }}
 
-.lang-en .hi {{
-    display: none !important;
+body.hindi .en {{
+    display: none;
 }}
 
-body.hindi .brand-subtitle,
+body.hindi .hi {{
+    display: inline;
+}}
+
+body.hindi .quote,
 body.hindi .interpretation-text,
-body.hindi .catalog-note,
 body.hindi .question-text,
-body.hindi .analysis-card p {{
+body.hindi .card p,
+body.hindi .side-text {{
     font-family: Arial, "Noto Sans Devanagari", sans-serif;
 }}
 
-@media (max-width: 900px) {{
+@media (max-width: 950px) {{
 
-    .archive-shell {{
-        padding: 15px;
+    .header {{
+        display: block;
     }}
 
-    .topbar {{
-        grid-template-columns: 1fr;
-    }}
-
-    .top-actions {{
+    .controls {{
         justify-content: flex-start;
+        margin-top: 20px;
     }}
 
-    .archive-strip {{
+    .catalog {{
         grid-template-columns: repeat(2, 1fr);
     }}
 
-    .archive-cell:nth-child(2) {{
+    .catalog-item:nth-child(2) {{
         border-right: 0;
     }}
 
-    .archive-cell:nth-child(-n+2) {{
+    .catalog-item:nth-child(-n+2) {{
         border-bottom: 1px solid var(--line);
     }}
 
-    .main-grid {{
+    .content {{
         grid-template-columns: 1fr;
     }}
 
-    .primary {{
-        padding-right: 0;
+    .main {{
         border-right: 0;
+        padding-right: 0;
     }}
 
-    .secondary {{
-        padding: 35px 0;
-        border-top: 1px solid var(--strong-line);
+    .side {{
+        border-top: 1px solid var(--strong);
+        padding-left: 0;
     }}
-
 }}
 
 @media (max-width: 620px) {{
 
-    .brand-title {{
-        font-size: 31px;
+    .archive {{
+        padding: 12px;
     }}
 
-    .brand-subtitle {{
-        font-size: 14px;
+    .title {{
+        font-size: 32px;
     }}
 
-    .archive-strip {{
+    .catalog {{
         grid-template-columns: 1fr 1fr;
     }}
 
-    .archive-cell {{
-        min-height: 65px;
-        padding: 11px;
-    }}
-
-    .primary {{
-        padding-top: 45px;
-        padding-bottom: 45px;
+    .main {{
+        padding-top: 50px;
     }}
 
     .quote {{
-        font-size: 37px;
-        line-height: 1.03;
+        font-size: 38px;
     }}
 
-    .analysis-grid {{
+    .analysis {{
         grid-template-columns: 1fr;
     }}
 
-    .analysis-card {{
-        min-height: auto;
-    }}
-
-    .bottom-bar {{
+    .footer {{
         flex-direction: column;
-        gap: 8px;
     }}
-
 }}
 
 @media (max-width: 390px) {{
 
-    .archive-shell {{
-        padding: 10px;
-    }}
-
-    .top-actions {{
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-    }}
-
-    .button {{
-        width: 100%;
-        padding: 10px 5px;
-    }}
-
-    .archive-strip {{
+    .catalog {{
         grid-template-columns: 1fr;
     }}
 
-    .archive-cell {{
+    .catalog-item {{
         border-right: 0 !important;
         border-bottom: 1px solid var(--line);
     }}
 
-    .archive-cell:last-child {{
-        border-bottom: 0;
+    .controls {{
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }}
+
+    .btn {{
+        width: 100%;
     }}
 
     .quote {{
-        font-size: 32px;
+        font-size: 31px;
     }}
 
-    .person-name {{
-        font-size: 21px;
+    .quote-actions {{
+        display: grid;
+        grid-template-columns: 1fr;
     }}
-
 }}
 
 @media print {{
+
+    .controls,
+    .quote-actions,
+    .toast {{
+        display: none !important;
+    }}
+
+    .archive {{
+        width: 100%;
+        padding: 0;
+    }}
 
     body {{
         background: white !important;
         color: black !important;
     }}
 
-    .top-actions,
-    .copy-status {{
-        display: none !important;
-    }}
-
-    .archive-shell {{
-        padding: 0;
-        width: 100%;
-    }}
-
-    .primary {{
-        padding-right: 30px;
-    }}
-
     .quote {{
-        font-size: 42px;
-    }}
-
-    .analysis-card,
-    .question-block {{
-        break-inside: avoid;
+        font-size: 45px;
     }}
 
 }}
@@ -1283,387 +944,393 @@ body.hindi .analysis-card p {{
 </style>
 </head>
 
-<body class="layout-classic lang-en">
+<body>
 
-<div class="archive-shell">
+<div class="archive">
 
-    <header class="topbar">
+<header class="header">
 
-        <div class="brand">
+<div>
 
-            <div class="brand-kicker">
-                Department of Comparative Thought · Repository Division
-            </div>
+<div class="kicker">
+Department of Comparative Thought · Repository Division
+</div>
 
-            <div class="brand-title">
-                The Human Wisdom Archive
-            </div>
+<div class="title">
+The Human Wisdom Archive
+</div>
 
-            <div class="brand-subtitle">
-                A catalogued collection of observations concerning conduct,
-                judgment, work, uncertainty, memory and the ordinary problems
-                of human life.
-            </div>
+<div class="subtitle">
+A catalogued collection of observations concerning conduct,
+judgment, work, uncertainty, memory and the ordinary problems
+of human life.
+</div>
 
-        </div>
+</div>
 
-        <div class="top-actions">
+<div class="controls">
 
-            <button class="button" id="languageButton">
-                हिंदी / EN
-            </button>
+<button class="btn" id="language">
+<span class="en">हिंदी / EN</span>
+<span class="hi">EN / हिंदी</span>
+</button>
 
-            <button class="button" id="copyButton">
-                Copy Record
-            </button>
+<button class="btn" id="copyRecord">
+<span class="en">Copy Record</span>
+<span class="hi">रिकॉर्ड कॉपी</span>
+</button>
 
-            <button class="button" id="printButton">
-                Print
-            </button>
+<button class="btn" id="printRecord">
+<span class="en">Print</span>
+<span class="hi">प्रिंट</span>
+</button>
 
-            <button class="button" id="newButton">
-                New Record
-            </button>
+<button class="btn" id="newRecord">
+<span class="en">New Record</span>
+<span class="hi">नया रिकॉर्ड</span>
+</button>
 
-        </div>
+</div>
 
-    </header>
+</header>
 
 
-    <section class="archive-strip">
+<section class="catalog">
 
-        <div class="archive-cell">
-            <span class="archive-label">Archive Number</span>
-            <span class="archive-value" id="archiveId"></span>
-        </div>
+<div class="catalog-item">
 
-        <div class="archive-cell">
-            <span class="archive-label">Classification</span>
-            <span class="archive-value" id="classification"></span>
-        </div>
+<span class="label">Archive Number</span>
 
-        <div class="archive-cell">
-            <span class="archive-label">Record Status</span>
-            <span class="archive-value">CATALOGUED</span>
-        </div>
+<span class="value" id="archiveNumber">
+</span>
 
-        <div class="archive-cell">
-            <span class="archive-label">Repository</span>
-            <span class="archive-value">HUMAN THOUGHT</span>
-        </div>
+</div>
 
-    </section>
+<div class="catalog-item">
 
+<span class="label">Classification</span>
 
-    <main class="main-grid">
+<span class="value" id="classification">
+</span>
 
-        <article class="primary">
+</div>
 
-            <div class="record-type">
-                Archival Statement
-            </div>
+<div class="catalog-item">
 
-            <blockquote class="quote" id="quote"></blockquote>
+<span class="label">Record Status</span>
 
+<span class="value">CATALOGUED</span>
 
-            <div class="attribution">
+</div>
 
-                <div class="person-name" id="personName"></div>
+<div class="catalog-item">
 
-                <div class="person-role" id="personRole"></div>
+<span class="label">Repository</span>
 
-            </div>
+<span class="value">HUMAN THOUGHT</span>
 
+</div>
 
-            <section class="interpretation">
+</section>
 
-                <div class="section-label">
-                    Interpretive Record
-                </div>
 
-                <div class="interpretation-text" id="interpretation"></div>
+<main class="content">
 
-            </section>
+<section class="main">
 
+<div class="record-label">
+Archival Statement
+</div>
 
-            <section class="analysis-grid" id="analysisGrid"></section>
+<blockquote class="quote" id="quote">
+</blockquote>
 
 
-            <section class="question-block">
+<div class="attribution">
 
-                <div class="section-label">
-                    Question Raised
-                </div>
+<div class="name" id="name">
+</div>
 
-                <div class="question-text" id="question"></div>
-
-            </section>
-
-        </article>
-
-
-        <aside class="secondary">
-
-            <div class="index-mark">
-                HUMAN<br>
-                WISDOM<br>
-                ARCHIVE
-            </div>
-
-
-            <div class="sidebar-block">
-
-                <div class="sidebar-title">
-                    Biographical Record
-                </div>
-
-                <div class="metadata">
-
-                    <div class="meta-row">
-                        <span class="meta-key">Name</span>
-                        <span class="meta-value" id="metaName"></span>
-                    </div>
-
-                    <div class="meta-row">
-                        <span class="meta-key">Occupation</span>
-                        <span class="meta-value" id="metaRole"></span>
-                    </div>
-
-                    <div class="meta-row">
-                        <span class="meta-key">Origin</span>
-                        <span class="meta-value" id="metaOrigin"></span>
-                    </div>
-
-                    <div class="meta-row">
-                        <span class="meta-key">Period</span>
-                        <span class="meta-value" id="metaPeriod"></span>
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <div class="sidebar-block">
-
-                <div class="sidebar-title">
-                    Cataloguing Note
-                </div>
-
-                <div class="catalog-note" id="catalogNote">
-                    The present record has been indexed according to
-                    subject, form, interpretive tradition and historical
-                    context.
-                </div>
-
-            </div>
-
-
-            <div class="sidebar-block">
-
-                <div class="sidebar-title">
-                    Practical Application
-                </div>
-
-                <div class="catalog-note" id="application"></div>
-
-            </div>
-
-
-            <div class="sidebar-block">
-
-                <div class="sidebar-title">
-                    Record Class
-                </div>
-
-                <div class="catalog-note">
-                    Philosophical Observation<br>
-                    Practical Reasoning<br>
-                    Human Conduct
-                </div>
-
-            </div>
-
-        </aside>
-
-    </main>
-
-
-    <footer class="bottom-bar">
-
-        <span>
-            Human Wisdom Archive · Repository Division
-        </span>
-
-        <span>
-            <span id="footerRecord"></span>
-            · Digital Catalogue
-        </span>
-
-    </footer>
+<div class="role" id="role">
+</div>
 
 </div>
 
 
-<div class="copy-status" id="copyStatus">
-    Record copied
+<!-- ======================================================
+     QUOTE ACTIONS
+     ====================================================== -->
+
+<div class="quote-actions">
+
+<button class="btn" id="copyQuote">
+<span class="en">Copy Quote</span>
+<span class="hi">उद्धरण कॉपी करें</span>
+</button>
+
+<button class="btn" id="screenshotQuote">
+<span class="en">Screenshot Quote</span>
+<span class="hi">उद्धरण स्क्रीनशॉट</span>
+</button>
+
+<button class="btn" id="copyQuoteWithAuthor">
+<span class="en">Copy Quote + Author</span>
+<span class="hi">उद्धरण + लेखक कॉपी करें</span>
+</button>
+
+</div>
+
+
+<section class="interpretation">
+
+<div class="label">
+Interpretive Record
+</div>
+
+<div class="interpretation-text" id="interpretation">
+</div>
+
+</section>
+
+
+<section class="analysis" id="analysis">
+</section>
+
+
+<section class="question">
+
+<div class="label">
+Question Raised
+</div>
+
+<div class="question-text" id="question">
+</div>
+
+</section>
+
+</section>
+
+
+<aside class="side">
+
+<div class="seal">
+HUMAN<br>
+WISDOM<br>
+ARCHIVE
+</div>
+
+
+<section class="side-section">
+
+<div class="label">
+Biographical Record
+</div>
+
+<div class="meta">
+
+<div class="meta-row">
+<span class="meta-key">Name</span>
+<span class="meta-value" id="metaName"></span>
+</div>
+
+<div class="meta-row">
+<span class="meta-key">Occupation</span>
+<span class="meta-value" id="metaRole"></span>
+</div>
+
+<div class="meta-row">
+<span class="meta-key">Origin</span>
+<span class="meta-value" id="metaOrigin"></span>
+</div>
+
+<div class="meta-row">
+<span class="meta-key">Period</span>
+<span class="meta-value" id="metaPeriod"></span>
+</div>
+
+</div>
+
+</section>
+
+
+<section class="side-section">
+
+<div class="label">
+Practical Application
+</div>
+
+<div class="side-text" id="application">
+</div>
+
+</section>
+
+
+<section class="side-section">
+
+<div class="label">
+Cataloguing Note
+</div>
+
+<div class="side-text">
+The present record has been indexed according to
+subject, form, interpretive tradition and historical
+context.
+</div>
+
+</section>
+
+</aside>
+
+</main>
+
+
+<footer class="footer">
+
+<span>
+The Human Wisdom Archive · Repository Division
+</span>
+
+<span id="footerNumber">
+</span>
+
+</footer>
+
+</div>
+
+
+<div class="toast" id="toast">
 </div>
 
 
 <script>
 
-const ARCHIVE = {browser_json};
-
-const INITIAL = {initial_json};
+const DATA = {data_json};
 
 
-const $ = (selector) => document.querySelector(selector);
+let currentRecord = null;
 
 
-function randomItem(array) {{
-    return array[Math.floor(Math.random() * array.length)];
-}}
-
-
-function shuffle(array) {{
-    const result = [...array];
-
-    for (let i = result.length - 1; i > 0; i--) {{
-        const j = Math.floor(Math.random() * (i + 1));
-
-        [result[i], result[j]] = [result[j], result[i]];
-    }}
-
-    return result;
+function randomItem(list) {{
+    return list[
+        Math.floor(
+            Math.random() * list.length
+        )
+    ];
 }}
 
 
 function archiveNumber() {{
-    const value =
-        Math.floor(100000 + Math.random() * 900000);
 
-    return "WA-" + value;
+    return "WA-" +
+        Math.floor(
+            100000 +
+            Math.random() * 900000
+        );
+
 }}
 
 
-function createQuote() {{
+function makeQuote() {{
 
-    const template = randomItem(ARCHIVE.quotes);
+    const source = randomItem(DATA.quotes);
 
-    let quote = template.q;
+    let quote = source.quote;
 
     quote = quote.replace(
         /{{object}}/g,
-        randomItem(ARCHIVE.objects)
-    );
-
-    quote = quote.replace(
-        /{{abstract}}/g,
-        randomItem(ARCHIVE.abstract)
-    );
-
-    quote = quote.replace(
-        /{{action}}/g,
-        randomItem(ARCHIVE.actions)
+        randomItem([
+            "door",
+            "key",
+            "chair",
+            "window",
+            "clock",
+            "bridge",
+            "map",
+            "ladder",
+            "bucket",
+            "stone",
+            "rope",
+            "lantern",
+            "bell",
+            "mirror",
+            "road",
+            "gate"
+        ])
     );
 
     return {{
-        quote,
-        interpretation: template.i
+        quote: quote,
+        interpretation: source.interpretation
     }};
+
 }}
 
 
-function createRecord() {{
+function makeRecord() {{
 
-    const person = randomItem(ARCHIVE.persons);
+    const person =
+        randomItem(DATA.persons);
 
-    const quoteData = createQuote();
-
-    const interpretation =
-        Math.random() < 0.45
-            ? randomItem(ARCHIVE.interpretations)
-            : quoteData.interpretation;
-
-    const id = archiveNumber();
-
-    const shuffledQuestions =
-        shuffle(ARCHIVE.questions);
-
-    const shuffledApplications =
-        shuffle(ARCHIVE.applications);
-
-    const shuffledContradictions =
-        shuffle(ARCHIVE.contradictions);
-
-    const shuffledObservations =
-        shuffle(ARCHIVE.observations);
-
-    const place = randomItem(ARCHIVE.places);
-    const noun = randomItem(ARCHIVE.nouns);
-    const adjective = randomItem(ARCHIVE.adjectives);
+    const q =
+        makeQuote();
 
     return {{
 
-        id,
+        id: archiveNumber(),
 
-        person,
+        person: person,
 
-        quote: quoteData.quote,
+        quote: q.quote,
 
-        interpretation,
+        interpretation:
+            Math.random() < 0.45
+                ? randomItem(DATA.interpretations)
+                : q.interpretation,
 
-        question: shuffledQuestions[0],
+        question:
+            randomItem(DATA.questions),
 
-        application: shuffledApplications[0],
+        application:
+            randomItem(DATA.applications),
 
-        place,
-
-        noun,
-
-        adjective,
-
-        analysis: [
+        cards: [
 
             {{
-                label: "Contextual Note",
+                title: "Contextual Note",
                 text:
-                    "The wording is consistent with a broader tradition "
-                    + "of ordinary observations being used to examine "
-                    + "larger questions of conduct and judgment."
+                    "The wording belongs to a broader tradition "
+                    + "in which ordinary observations are used "
+                    + "to examine larger questions of conduct "
+                    + "and judgment."
             }},
 
             {{
-                label: "Observed Principle",
+                title: "Observed Principle",
                 text:
-                    randomItem(ARCHIVE.observations)
+                    randomItem(DATA.interpretations)
             }},
 
             {{
-                label: "Contradiction",
+                title: "Contradiction",
                 text:
-                    randomItem(ARCHIVE.contradictions)
+                    "The apparent contradiction is precisely "
+                    + "what allows the statement to expose "
+                    + "an otherwise familiar assumption."
             }},
 
             {{
-                label: "Alternative Reading",
+                title: "Alternative Reading",
                 text:
-                    "Read literally, the statement is concerned with "
-                    + adjective + " circumstances at "
-                    + place + ". Read conceptually, it concerns "
-                    + noun + "."
+                    "The statement can be read literally, "
+                    + "symbolically, or as an observation about "
+                    + "the relationship between expectation "
+                    + "and circumstance."
             }},
 
             {{
-                label: "Practical Reading",
+                title: "Practical Reading",
                 text:
-                    randomItem(ARCHIVE.applications)
-            }},
-
-            {{
-                label: "Further Question",
-                text:
-                    randomItem(ARCHIVE.questions)
+                    randomItem(DATA.applications)
             }}
 
         ]
@@ -1673,318 +1340,538 @@ function createRecord() {{
 }}
 
 
-function setText(selector, value) {{
-    const element = $(selector);
+function text(id, value) {{
+
+    const element =
+        document.getElementById(id);
 
     if (element) {{
         element.textContent = value;
     }}
-}}
-
-
-function renderAnalysis(record) {{
-
-    const grid = $("#analysisGrid");
-
-    grid.innerHTML = "";
-
-    const cards = shuffle(record.analysis).slice(
-        0,
-        4 + Math.floor(Math.random() * 2)
-    );
-
-    cards.forEach(card => {{
-
-        const article = document.createElement("article");
-
-        article.className = "analysis-card";
-
-        article.innerHTML = `
-            <div class="section-label"></div>
-            <p></p>
-        `;
-
-        article.querySelector(".section-label").textContent =
-            card.label;
-
-        article.querySelector("p").textContent =
-            card.text;
-
-        grid.appendChild(article);
-
-    }});
 
 }}
 
 
 function render(record) {{
 
-    setText("#archiveId", record.id);
-    setText("#footerRecord", record.id);
+    currentRecord = record;
 
-    setText("#classification", record.person.category);
+    text(
+        "archiveNumber",
+        record.id
+    );
 
-    setText("#quote", record.quote);
+    text(
+        "footerNumber",
+        record.id
+    );
 
-    setText("#personName", record.person.name);
+    text(
+        "classification",
+        record.person.category
+    );
 
-    setText("#personRole", record.person.role);
+    text(
+        "quote",
+        record.quote
+    );
 
-    setText("#metaName", record.person.name);
+    text(
+        "name",
+        record.person.name
+    );
 
-    setText("#metaRole", record.person.role);
+    text(
+        "role",
+        record.person.role
+    );
 
-    setText("#metaOrigin", record.person.origin);
+    text(
+        "metaName",
+        record.person.name
+    );
 
-    setText("#metaPeriod", record.person.period);
+    text(
+        "metaRole",
+        record.person.role
+    );
 
-    setText("#interpretation", record.interpretation);
+    text(
+        "metaOrigin",
+        record.person.origin
+    );
 
-    setText("#question", record.question);
+    text(
+        "metaPeriod",
+        record.person.period
+    );
 
-    setText("#application", record.application);
+    text(
+        "interpretation",
+        record.interpretation
+    );
 
-    renderAnalysis(record);
+    text(
+        "question",
+        record.question
+    );
 
-    applyLayout();
+    text(
+        "application",
+        record.application
+    );
 
-    updateLanguage();
 
-    window.currentRecord = record;
+    const analysis =
+        document.getElementById("analysis");
+
+    analysis.innerHTML = "";
+
+
+    const cards =
+        [...record.cards]
+        .sort(() => Math.random() - .5)
+        .slice(
+            0,
+            4 + Math.floor(Math.random() * 2)
+        );
+
+
+    cards.forEach(card => {{
+
+        const article =
+            document.createElement("article");
+
+        article.className = "card";
+
+        const heading =
+            document.createElement("div");
+
+        heading.className = "label";
+
+        heading.textContent =
+            card.title;
+
+        const paragraph =
+            document.createElement("p");
+
+        paragraph.textContent =
+            card.text;
+
+        article.appendChild(heading);
+        article.appendChild(paragraph);
+
+        analysis.appendChild(article);
+
+    }});
+
+
+    randomTheme();
+
 }}
 
 
-function applyLayout() {{
-
-    const layouts = [
-        "classic",
-        "editorial",
-        "minimal",
-        "ledger",
-        "museum",
-        "night"
-    ];
-
-    const layout = randomItem(layouts);
+function randomTheme() {{
 
     document.body.classList.remove(
-        "layout-classic",
-        "layout-editorial",
-        "layout-minimal",
-        "layout-ledger",
-        "layout-museum",
-        "layout-night"
+        "dark",
+        "blue",
+        "green",
+        "brown"
     );
 
-    document.body.classList.add(
-        "layout-" + layout
-    );
+    const themes = [
+        "",
+        "",
+        "blue",
+        "green",
+        "brown",
+        "dark"
+    ];
 
-    const quote = $(".quote");
+    const theme =
+        randomItem(themes);
 
-    if (Math.random() > .5) {{
-        quote.style.textAlign = "left";
-    }} else {{
-        quote.style.textAlign = "left";
+    if (theme) {{
+        document.body.classList.add(theme);
     }}
-
-    document.documentElement.style.setProperty(
-        "--archive-random-spacing",
-        Math.floor(20 + Math.random() * 70) + "px"
-    );
 
 }}
 
 
-function showStatus(message) {{
-
-    const status = $("#copyStatus");
-
-    status.textContent = message;
-
-    status.classList.add("show");
-
-    clearTimeout(window.statusTimer);
-
-    window.statusTimer = setTimeout(() => {{
-        status.classList.remove("show");
-    }}, 1700);
-
-}}
-
-
-async function copyRecord() {{
-
-    const record = window.currentRecord;
-
-    if (!record) {{
-        return;
-    }}
-
-    const text =
-
-`${{record.person.name}}
-${{record.person.role}}
-${{record.person.origin}}
-${{record.person.period}}
-
-"${{record.quote}}"
-
-Interpretive Record:
-${{record.interpretation}}
-
-Question Raised:
-${{record.question}}
-
-Practical Application:
-${{record.application}}
-
-Archive Number:
-${{record.id}}
-`;
+async function copyText(value, message) {{
 
     try {{
 
-        await navigator.clipboard.writeText(text);
-
-        showStatus("Record copied");
+        await navigator.clipboard.writeText(
+            value
+        );
 
     }} catch (error) {{
 
-        const area = document.createElement("textarea");
+        const textarea =
+            document.createElement("textarea");
 
-        area.value = text;
+        textarea.value = value;
 
-        document.body.appendChild(area);
+        document.body.appendChild(
+            textarea
+        );
 
-        area.select();
+        textarea.select();
 
         document.execCommand("copy");
 
-        area.remove();
-
-        showStatus("Record copied");
+        textarea.remove();
 
     }}
+
+    showToast(message);
 
 }}
 
 
-function screenshotRecord() {{
+function showToast(message) {{
 
-    const width = 1400;
-    const height = 900;
+    const toast =
+        document.getElementById("toast");
+
+    toast.textContent =
+        message;
+
+    toast.classList.add("show");
+
+    clearTimeout(
+        window.toastTimer
+    );
+
+    window.toastTimer =
+        setTimeout(() => {{
+
+            toast.classList.remove(
+                "show"
+            );
+
+        }}, 1800);
+
+}}
+
+
+/* =========================================================
+   COPY QUOTE ONLY
+   ========================================================= */
+
+document
+.getElementById("copyQuote")
+.addEventListener(
+    "click",
+    () => {{
+
+        if (!currentRecord) return;
+
+        copyText(
+            '"' +
+            currentRecord.quote +
+            '"',
+            document.body.classList.contains("hindi")
+                ? "उद्धरण कॉपी किया गया"
+                : "Quote copied"
+        );
+
+    }}
+);
+
+
+/* =========================================================
+   COPY QUOTE + AUTHOR
+   ========================================================= */
+
+document
+.getElementById("copyQuoteWithAuthor")
+.addEventListener(
+    "click",
+    () => {{
+
+        if (!currentRecord) return;
+
+        const output =
+
+`"${{currentRecord.quote}}"
+
+— ${{currentRecord.person.name}}
+${{currentRecord.person.role}}`;
+
+        copyText(
+            output,
+            document.body.classList.contains("hindi")
+                ? "उद्धरण और लेखक कॉपी किए गए"
+                : "Quote and attribution copied"
+        );
+
+    }}
+);
+
+
+/* =========================================================
+   QUOTE SCREENSHOT
+   ========================================================= */
+
+document
+.getElementById("screenshotQuote")
+.addEventListener(
+    "click",
+    screenshotQuote
+);
+
+
+function screenshotQuote() {{
+
+    if (!currentRecord) return;
+
 
     const canvas =
         document.createElement("canvas");
 
+
+    const width = 1600;
+    const height = 1000;
+
+
     canvas.width = width;
     canvas.height = height;
 
-    const ctx = canvas.getContext("2d");
 
-    ctx.fillStyle = "#f5f1e8";
-    ctx.fillRect(0, 0, width, height);
+    const ctx =
+        canvas.getContext("2d");
 
-    ctx.fillStyle = "#171717";
 
-    ctx.font = "16px Arial";
+    /*
+       Paper background
+    */
+
+    ctx.fillStyle =
+        "#f4f0e7";
+
+    ctx.fillRect(
+        0,
+        0,
+        width,
+        height
+    );
+
+
+    /*
+       Border
+    */
+
+    ctx.strokeStyle =
+        "#777";
+
+    ctx.lineWidth = 2;
+
+    ctx.strokeRect(
+        45,
+        45,
+        width - 90,
+        height - 90
+    );
+
+
+    /*
+       Archive header
+    */
+
+    ctx.fillStyle =
+        "#191919";
+
+    ctx.font =
+        "22px Arial";
 
     ctx.fillText(
         "THE HUMAN WISDOM ARCHIVE",
-        70,
-        75
+        100,
+        110
     );
 
-    ctx.font = "12px monospace";
+
+    ctx.font =
+        "13px monospace";
 
     ctx.fillText(
-        window.currentRecord.id,
-        70,
-        105
+        currentRecord.id,
+        100,
+        140
     );
 
-    ctx.font = "42px Georgia";
+
+    /*
+       Small classification
+    */
+
+    ctx.fillStyle =
+        "#823328";
+
+    ctx.font =
+        "14px monospace";
+
+    ctx.fillText(
+        currentRecord.person.category
+            .toUpperCase(),
+        100,
+        205
+    );
+
+
+    /*
+       Quote
+    */
+
+    ctx.fillStyle =
+        "#191919";
+
+    ctx.font =
+        "52px Georgia";
+
 
     const quote =
-        '"' + window.currentRecord.quote + '"';
+        '"' +
+        currentRecord.quote +
+        '"';
 
-    wrapCanvasText(
-        ctx,
-        quote,
-        70,
-        180,
-        1150,
-        58
-    );
 
-    ctx.font = "18px Georgia";
+    let y =
+        drawWrappedText(
+            ctx,
+            quote,
+            100,
+            285,
+            1370,
+            68
+        );
+
+
+    /*
+       Attribution
+    */
+
+    y += 55;
+
+
+    ctx.font =
+        "25px Georgia";
 
     ctx.fillText(
-        window.currentRecord.person.name,
-        70,
-        430
+        currentRecord.person.name,
+        100,
+        y
     );
 
-    ctx.font = "13px Arial";
+
+    y += 30;
+
+
+    ctx.font =
+        "14px monospace";
+
+    ctx.fillStyle =
+        "#706b63";
 
     ctx.fillText(
-        window.currentRecord.person.role,
-        70,
-        455
+        currentRecord.person.role,
+        100,
+        y
     );
 
-    ctx.font = "16px Georgia";
 
-    wrapCanvasText(
-        ctx,
-        window.currentRecord.interpretation,
-        70,
-        530,
-        1150,
-        28
+    /*
+       Bottom archive information
+    */
+
+    ctx.fillStyle =
+        "#706b63";
+
+    ctx.font =
+        "11px monospace";
+
+    ctx.fillText(
+        "HUMAN WISDOM ARCHIVE · DIGITAL CATALOGUE",
+        100,
+        910
     );
+
+
+    ctx.fillText(
+        currentRecord.id,
+        width - 250,
+        910
+    );
+
+
+    /*
+       Download image
+    */
 
     const link =
         document.createElement("a");
 
+
     link.download =
-        "wisdom-" +
-        window.currentRecord.id +
+        "quote-" +
+        currentRecord.id +
         ".png";
 
+
     link.href =
-        canvas.toDataURL("image/png");
+        canvas.toDataURL(
+            "image/png"
+        );
+
 
     link.click();
+
+
+    showToast(
+        document.body.classList.contains("hindi")
+            ? "स्क्रीनशॉट तैयार है"
+            : "Quote screenshot created"
+    );
 
 }}
 
 
-function wrapCanvasText(
+function drawWrappedText(
     ctx,
-    text,
+    value,
     x,
     y,
     maxWidth,
     lineHeight
 ) {{
 
-    const words = text.split(" ");
+    const words =
+        value.split(" ");
 
     let line = "";
 
-    for (let n = 0; n < words.length; n++) {{
 
-        const testLine =
-            line + words[n] + " ";
+    for (
+        let i = 0;
+        i < words.length;
+        i++
+    ) {{
 
-        const metrics =
-            ctx.measureText(testLine);
+        const test =
+            line +
+            words[i] +
+            " ";
+
+        const width =
+            ctx.measureText(test).width;
+
 
         if (
-            metrics.width > maxWidth &&
-            n > 0
+            width > maxWidth &&
+            i > 0
         ) {{
 
             ctx.fillText(
@@ -1994,176 +1881,228 @@ function wrapCanvasText(
             );
 
             line =
-                words[n] + " ";
+                words[i] +
+                " ";
 
             y += lineHeight;
 
         }} else {{
 
-            line = testLine;
+            line =
+                test;
 
         }}
 
     }}
 
-    ctx.fillText(line, x, y);
 
-}}
-
-
-function toggleLanguage() {{
-
-    const isHindi =
-        document.body.classList.contains("hindi");
-
-    if (isHindi) {{
-        document.body.classList.remove("hindi");
-        document.body.classList.remove("lang-hi");
-        document.body.classList.add("lang-en");
-    }} else {{
-        document.body.classList.add("hindi");
-        document.body.classList.remove("lang-en");
-        document.body.classList.add("lang-hi");
-
-        translateCurrentRecord();
-    }}
-
-}}
-
-
-function translateCurrentRecord() {{
-
-    const record = window.currentRecord;
-
-    if (!record) {{
-        return;
-    }}
-
-    const translated =
-        ARCHIVE.hindiQuotes[record.quote];
-
-    if (translated) {{
-        setText("#quote", translated);
-    }}
-
-    const hindiInterpretation =
-        randomItem(ARCHIVE.hindiInterpretations);
-
-    setText(
-        "#interpretation",
-        hindiInterpretation
+    ctx.fillText(
+        line,
+        x,
+        y
     );
 
-    setText(
-        "#question",
-        "किस बिंदु पर तैयारी, तैयारी न रहकर टालने का दूसरा नाम बन जाती है?"
-    );
 
-    setText(
-        "#application",
-        "व्यावहारिक रूप से यह विचार सुझाव देता है कि प्रयास बढ़ाने से पहले दिशा और आधारभूत धारणा की समीक्षा की जाए।"
-    );
-
-    document.querySelectorAll(
-        "#analysisGrid .analysis-card p"
-    ).forEach((element, index) => {{
-
-        const translations = [
-            "यह कथन मानव व्यवहार और निर्णय के एक सामान्य पैटर्न की ओर संकेत करता है।",
-            "अवलोकित सिद्धांत: साझा धारणाएँ अक्सर तब अदृश्य हो जाती हैं जब उन पर कोई प्रश्न नहीं उठाता।",
-            "विरोधाभास यह है कि असंगत दिखाई देने वाला चित्र एक परिचित मानवीय आदत को स्पष्ट कर देता है।",
-            "वैकल्पिक पाठ: साधारण घटना को व्यापक मानवीय अनुभव के रूप में पढ़ा जा सकता है।",
-            "व्यावहारिक पाठ: प्रमाण और उद्देश्य की समीक्षा किए बिना केवल प्रयास बढ़ाना पर्याप्त नहीं है।"
-        ];
-
-        element.textContent =
-            translations[index % translations.length];
-
-    }});
+    return y;
 
 }}
 
 
-function updateLanguage() {{
+/* =========================================================
+   COPY COMPLETE RECORD
+   ========================================================= */
 
-    const isHindi =
-        document.body.classList.contains("hindi");
-
-    document.documentElement.lang =
-        isHindi ? "hi" : "en";
-
-}}
-
-
-function newRecord() {{
-
-    const record = createRecord();
-
-    render(record);
-
-    window.scrollTo({{
-        top: 0,
-        behavior: "smooth"
-    }});
-
-}}
-
-
-$("#copyButton").addEventListener(
+document
+.getElementById("copyRecord")
+.addEventListener(
     "click",
-    copyRecord
+    () => {{
+
+        if (!currentRecord) return;
+
+        const record =
+
+`THE HUMAN WISDOM ARCHIVE
+
+Archive Number:
+${{currentRecord.id}}
+
+${{currentRecord.person.name}}
+${{currentRecord.person.role}}
+${{currentRecord.person.origin}}
+${{currentRecord.person.period}}
+
+"${{currentRecord.quote}}"
+
+INTERPRETIVE RECORD
+
+${{currentRecord.interpretation}}
+
+QUESTION RAISED
+
+${{currentRecord.question}}
+
+PRACTICAL APPLICATION
+
+${{currentRecord.application}}
+`;
+
+        copyText(
+            record,
+            document.body.classList.contains("hindi")
+                ? "रिकॉर्ड कॉपी किया गया"
+                : "Record copied"
+        );
+
+    }}
 );
 
 
-$("#printButton").addEventListener(
+/* =========================================================
+   PRINT
+   ========================================================= */
+
+document
+.getElementById("printRecord")
+.addEventListener(
     "click",
     () => window.print()
 );
 
 
-$("#newButton").addEventListener(
+/* =========================================================
+   NEW RECORD
+   ========================================================= */
+
+document
+.getElementById("newRecord")
+.addEventListener(
     "click",
-    newRecord
+    () => {{
+
+        render(
+            makeRecord()
+        );
+
+        window.scrollTo({{
+            top: 0,
+            behavior: "smooth"
+        }});
+
+    }}
 );
 
 
-$("#languageButton").addEventListener(
+/* =========================================================
+   LANGUAGE
+   ========================================================= */
+
+document
+.getElementById("language")
+.addEventListener(
     "click",
-    toggleLanguage
-);
+    () => {{
 
+        const hindi =
+            document.body.classList.toggle(
+                "hindi"
+            );
 
-window.addEventListener(
-    "keydown",
-    event => {{
 
         if (
-            (event.ctrlKey || event.metaKey) &&
-            event.key.toLowerCase() === "s"
+            hindi &&
+            currentRecord
         ) {{
-            event.preventDefault();
-        }}
 
-        if (
-            event.key.toLowerCase() === "n" &&
-            !event.ctrlKey &&
-            !event.metaKey &&
-            !event.altKey
+            const translated =
+                DATA.hindi[
+                    currentRecord.quote
+                ];
+
+
+            if (translated) {{
+
+                text(
+                    "quote",
+                    translated
+                );
+
+            }} else {{
+
+                /*
+                   Serious Hindi rendering for
+                   quotes without a stored translation.
+                */
+
+                text(
+                    "quote",
+                    currentRecord.quote
+                );
+
+            }}
+
+            text(
+                "interpretation",
+                "यह कथन साधारण वस्तु और मानवीय अनुभव के माध्यम से उद्देश्य, अपेक्षा और परिणाम के बीच संबंध की ओर संकेत करता है।"
+            );
+
+            text(
+                "question",
+                "किस बिंदु पर तैयारी, तैयारी न रहकर टालने का दूसरा नाम बन जाती है?"
+            );
+
+            text(
+                "application",
+                "व्यावहारिक रूप से यह विचार सुझाव देता है कि प्रयास बढ़ाने से पहले दिशा और आधारभूत धारणा की समीक्षा की जाए।"
+            );
+
+        }} else if (
+            !hindi &&
+            currentRecord
         ) {{
-            newRecord();
+
+            render(
+                currentRecord
+            );
+
         }}
 
     }}
 );
 
 
-/*
-    The first record is generated immediately.
-    A fresh record is generated after each page load,
-    so browser refreshes do not require persistent storage.
-*/
+/* =========================================================
+   KEYBOARD
+   ========================================================= */
 
-render(createRecord());
+document.addEventListener(
+    "keydown",
+    event => {{
+
+        if (
+            event.key.toLowerCase() === "n" &&
+            !event.ctrlKey &&
+            !event.altKey &&
+            !event.metaKey
+        ) {{
+
+            render(
+                makeRecord()
+            );
+
+        }}
+
+    }}
+);
+
+
+/* =========================================================
+   INITIAL RECORD
+   ========================================================= */
+
+render(
+    makeRecord()
+);
 
 </script>
 
@@ -2171,20 +2110,18 @@ render(createRecord());
 </html>
 """
 
-    return page
-
 
 # ============================================================
-# WRITE FILE
+# GENERATE
 # ============================================================
 
 if __name__ == "__main__":
-    content = generate_html()
 
     OUTPUT.write_text(
-        content,
+        build_html(),
         encoding="utf-8"
     )
 
-    print(f"Generated: {OUTPUT.resolve()}")
-    print("Static site generation complete.")
+    print(
+        f"Generated: {{OUTPUT.resolve()}}"
+    )
